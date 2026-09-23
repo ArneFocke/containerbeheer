@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#0b3d2e" />
+<title>CVA Containers</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes" />
+<style>
+  :root{
+    --bg:#f4f5f7; --card:#ffffff; --ink:#0c1a17; --text:#0f1f1b; --muted:#6b7a76; --faint:#9aa8a3;
+    --line:#e8ebe9; --line-2:#eef1ef;
+    --brand:#0f7a5a; --brand-2:#12b981; --brand-ink:#0b3d2e;
+    --amber:#e08a00; --amber-bg:#fff6e6; --red:#d64545; --red-bg:#fdeded;
+    --green:#0f9d63; --green-bg:#e9f7f0;
+    --grad-brand:linear-gradient(135deg,#12b981 0%,#0f7a5a 100%);
+    --grad-head:linear-gradient(160deg,#0f4a37 0%,#0b3d2e 60%,#0a2f24 100%);
+    --sh-sm:0 1px 2px rgba(11,61,46,.05);
+    --sh:0 2px 8px rgba(11,61,46,.06),0 8px 24px rgba(11,61,46,.05);
+    --sh-lg:0 8px 40px rgba(11,61,46,.14);
+    --sh-brand:0 6px 18px rgba(15,122,90,.30);
+    --r:18px; --r-sm:13px; --nav-h:94px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    background-image:radial-gradient(130% 55% at 50% -8%, #ffffff 0%, rgba(255,255,255,0) 60%);
+    background-attachment:fixed;
+    color:var(--text); font-size:15.5px; line-height:1.45;
+    padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    font-feature-settings:"cv11","ss01"; letter-spacing:-.01em;
+  }
+  .tnum{font-variant-numeric:tabular-nums}
+  svg.ic{width:20px;height:20px;stroke:currentColor;stroke-width:1.85;fill:none;
+    stroke-linecap:round;stroke-linejoin:round;display:block;flex:none}
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:20; background:var(--grad-head); color:#eafaf3;
+    padding:calc(env(safe-area-inset-top) + 16px) 18px 18px;
+    border-radius:0 0 26px 26px; box-shadow:0 12px 34px rgba(10,47,36,.30); overflow:hidden;
+  }
+  header::before{content:''; position:absolute; top:-55%; left:-8%; width:64%; height:180%;
+    background:radial-gradient(closest-side, rgba(63,224,160,.30), rgba(63,224,160,0) 72%); pointer-events:none}
+  header::after{content:''; position:absolute; bottom:-70%; right:-14%; width:60%; height:170%;
+    background:radial-gradient(closest-side, rgba(18,185,129,.20), rgba(18,185,129,0) 72%); pointer-events:none}
+  .brandrow{display:flex; align-items:center; justify-content:space-between; gap:10px; position:relative; z-index:1}
+  .brand{display:flex; align-items:center; gap:11px}
+  .logo{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.14);
+    display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  .logo svg.ic{width:22px;height:22px;stroke:#7ff0c0;stroke-width:2}
+  .brand .t{font-weight:750; font-size:19px; letter-spacing:-.02em}
+  .brand .s{font-size:12px; color:#8fd9bd; font-weight:600; letter-spacing:.02em; margin-top:-2px}
+  .liveDot{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);
+    padding:7px 12px;border-radius:999px;font-size:12.5px;font-weight:650}
+  .liveDot .d{width:7px;height:7px;border-radius:50%;background:#3fe0a0;box-shadow:0 0 0 3px rgba(63,224,160,.25)}
+
+  main{padding:16px 16px 26px; max-width:640px; margin:0 auto}
+  .sec{font-size:12px; text-transform:uppercase; letter-spacing:.09em; color:var(--faint);
+    font-weight:700; margin:20px 4px 10px}
+  .sec:first-child{margin-top:6px}
+
+  /* ---------- hero stats ---------- */
+  .hero{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:2px 0 6px}
+  .stat{background:var(--card); border:1px solid var(--line); border-radius:var(--r-sm);
+    padding:13px 12px; box-shadow:var(--sh-sm); position:relative; overflow:hidden}
+  .stat .n{font-size:26px; font-weight:800; letter-spacing:-.03em; line-height:1}
+  .stat .l{font-size:11.5px; color:var(--muted); font-weight:600; margin-top:5px; display:flex; align-items:center; gap:5px}
+  .stat .l svg.ic{width:14px;height:14px;stroke-width:2}
+  .stat.g .n{color:var(--brand)} .stat.a .n{color:var(--amber)} .stat.r .n{color:var(--red)}
+  .stat::after{content:'';position:absolute;right:-14px;top:-14px;width:46px;height:46px;border-radius:50%;opacity:.10}
+  .stat.g::after{background:var(--brand)} .stat.a::after{background:var(--amber)} .stat.r::after{background:var(--red)}
+
+  /* ---------- chips ---------- */
+  .chips{display:flex; gap:8px; overflow-x:auto; padding:2px 2px 4px; scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap; border:1px solid var(--line); background:#fff; color:var(--muted);
+    padding:8px 15px; border-radius:999px; font-size:13.5px; font-weight:650; cursor:pointer; transition:.15s}
+  .chip.active{background:var(--brand-ink); color:#eafaf3; border-color:var(--brand-ink); box-shadow:var(--sh-sm)}
+
+  /* ---------- search ---------- */
+  .searchbox{position:relative; margin:10px 0 14px}
+  .searchbox svg.ic{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--faint)}
+  .search{width:100%; padding:13px 14px 13px 42px; border:1px solid var(--line); border-radius:14px;
+    font-size:16px; background:#fff; outline:none; box-shadow:var(--sh-sm); transition:.15s}
+  .search:focus{border-color:var(--brand-2); box-shadow:0 0 0 4px rgba(18,185,129,.12)}
+
+  /* ---------- cards ---------- */
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:15px;
+    margin-bottom:11px; box-shadow:var(--sh)}
+  .card.tap{cursor:pointer; transition:transform .12s ease, box-shadow .12s}
+  .card.tap:active{transform:scale(.985); box-shadow:var(--sh-sm)}
+  .card.late{border-color:#f6cccc; background:linear-gradient(180deg,#fff8f8,#fff)}
+  .row{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .clead{display:flex; align-items:center; gap:12px; min-width:0}
+  .cavatar{width:42px;height:42px;border-radius:12px;background:var(--green-bg);color:var(--brand);
+    display:flex;align-items:center;justify-content:center;flex:none;box-shadow:inset 0 0 0 1px rgba(15,122,90,.10)}
+  .cavatar.amber{background:var(--amber-bg);color:var(--amber);box-shadow:inset 0 0 0 1px rgba(224,138,0,.12)}
+  .cavatar.slate{background:#eef1f0;color:var(--muted);box-shadow:none}
+  .cavatar svg.ic{width:22px;height:22px}
+  .code{font-weight:750; font-size:16.5px; letter-spacing:-.01em}
+  .sub{color:var(--muted); font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .chev{color:var(--faint)}
+
+  .pill{font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:5px; letter-spacing:.01em}
+  .pill .dot{width:6px;height:6px;border-radius:50%}
+  .pill.green{background:var(--green-bg); color:#0c7a4e} .pill.green .dot{background:var(--green)}
+  .pill.amber{background:var(--amber-bg); color:#a86400} .pill.amber .dot{background:var(--amber)}
+  .pill.slate{background:#eef1f0; color:#5b6a65} .pill.slate .dot{background:#8a9994}
+  .pill.red{background:var(--red-bg); color:#b23333} .pill.red .dot{background:var(--red)}
+
+  .daysbadge{display:inline-flex;align-items:center;gap:6px;font-weight:750;font-size:14px;color:var(--muted)}
+  .daysbadge svg.ic{width:15px;height:15px;stroke-width:2}
+  .daysbadge.warn{color:var(--amber)} .daysbadge.bad{color:var(--red)}
+
+  .metaline{display:flex; align-items:center; gap:8px; margin-top:10px; color:var(--muted); font-size:13.5px}
+  .metaline svg.ic{width:16px;height:16px;color:var(--faint);flex:none}
+  .metaline b{color:var(--text); font-weight:650}
+
+  /* ---------- Verhuurd: status-banner ---------- */
+  .fbanner{background:var(--grad-head); color:#eafaf3; border-radius:var(--r); padding:16px 17px; margin:2px 0 14px; box-shadow:var(--sh)}
+  .fbanner .top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
+  .fbanner .n{font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1}
+  .fbanner .l{font-size:12.5px; color:#8fd9bd; font-weight:600; margin-top:3px}
+  .lateflag{display:flex; align-items:center; gap:6px; background:rgba(242,109,109,.22); color:#ffdada;
+    padding:7px 12px; border-radius:999px; font-size:12.5px; font-weight:750; white-space:nowrap}
+  .lateflag svg.ic{width:15px;height:15px;stroke:#ffb4b4}
+  .stackbar{display:flex; height:10px; border-radius:999px; overflow:hidden; margin:15px 0 11px; background:rgba(255,255,255,.16)}
+  .stackbar i{height:100%; transition:width .6s cubic-bezier(.16,1,.3,1)}
+  .sb-green{background:#3fe0a0}.sb-amber{background:#f6b23a}.sb-red{background:#f26d6d}
+  .fbleg{display:flex; gap:16px; font-size:12px; color:#cdece0; font-weight:600; flex-wrap:wrap}
+  .fbleg b{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:middle}
+  .fbleg .g{background:#3fe0a0}.fbleg .a{background:#f6b23a}.fbleg .r{background:#f26d6d}
+
+  /* ---------- Verhuurd: kaarten ---------- */
+  .vcard{border-left-width:4px}
+  .vcard.u-green{border-left-color:var(--green)} .vcard.u-amber{border-left-color:var(--amber)} .vcard.u-red{border-left-color:var(--red)}
+  .vdays{display:flex; align-items:baseline; gap:2px; flex:none}
+  .vdays .big{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1}
+  .vdays .u{font-size:12.5px; font-weight:700; color:var(--muted)}
+  .u-green{color:var(--green)} .u-amber{color:var(--amber)} .u-red{color:var(--red)}
+  .pdot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--red);
+    margin-left:7px; vertical-align:middle; animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(214,69,69,.55)}70%{box-shadow:0 0 0 8px rgba(214,69,69,0)}100%{box-shadow:0 0 0 0 rgba(214,69,69,0)}}
+  .prog{height:8px; background:#eef1f0; border-radius:999px; overflow:hidden; margin:13px 0 8px}
+  .prog i{display:block; height:100%; border-radius:999px; transition:width .6s cubic-bezier(.16,1,.3,1)}
+  .pf-green{background:linear-gradient(90deg,#12b981,#0f9d63)}
+  .pf-amber{background:linear-gradient(90deg,#f6b23a,#e08a00)}
+  .pf-red{background:linear-gradient(90deg,#f26d6d,#d64545)}
+  .progmeta{display:flex; justify-content:space-between; align-items:center; font-size:12.5px; color:var(--muted); font-weight:600}
+  .progmeta svg.ic{width:14px;height:14px;vertical-align:-2px;margin-right:4px;color:var(--faint)}
+
+  /* ---------- buttons ---------- */
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none;
+    border-radius:14px; padding:14px 16px; font-size:15.5px; font-weight:700; cursor:pointer; width:100%;
+    margin-top:12px; transition:transform .1s, box-shadow .15s, background .15s; letter-spacing:-.01em}
+  .btn:active{transform:scale(.98)}
+  .btn svg.ic{width:18px;height:18px;stroke-width:2}
+  .btn.primary{background:var(--grad-brand); color:#fff; box-shadow:var(--sh-brand)}
+  .btn.ghost{background:#fff; color:var(--brand); border:1.5px solid #cdeadf; box-shadow:var(--sh-sm)}
+  .btn.tint{background:var(--green-bg); color:var(--brand)}
+  .btn.tint-slate{background:#eef1f0; color:#4a5854}
+  .btn.tint-red{background:var(--red-bg); color:var(--red)}
+  .btn.sm{width:auto; padding:10px 14px; font-size:13.5px; margin-top:0; border-radius:12px}
+  .btn-row{display:flex; gap:9px; margin-top:13px}
+  .btn-row .btn{flex:1; margin-top:0}
+
+  /* ---------- quick-action dashboard ---------- */
+  .quick{display:grid; grid-template-columns:1fr 1fr; gap:11px; margin:2px 0 18px}
+  .qbtn{display:flex; align-items:center; gap:12px; border:none; border-radius:17px; padding:16px 15px;
+    cursor:pointer; text-align:left; box-shadow:var(--sh); transition:transform .1s}
+  .qbtn:active{transform:scale(.975)}
+  .q-plaats{background:var(--grad-brand); color:#fff; box-shadow:var(--sh-brand)}
+  .q-ophaal{background:#fff; color:var(--brand-ink); border:1px solid var(--line)}
+  .qic{width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex:none}
+  .q-plaats .qic{background:rgba(255,255,255,.20)}
+  .q-ophaal .qic{background:var(--green-bg); color:var(--brand)}
+  .qic svg.ic{width:25px; height:25px; stroke-width:2.2}
+  .qt{display:flex; flex-direction:column; min-width:0}
+  .qt b{font-weight:750; font-size:16.5px; letter-spacing:-.015em; line-height:1.1}
+  .qt small{font-weight:600; font-size:11.5px; margin-top:3px; opacity:.85}
+  .q-ophaal .qt small{color:var(--muted)}
+
+  /* ---------- form ---------- */
+  label{display:block; font-size:12.5px; font-weight:700; color:var(--muted); margin:15px 3px 7px; letter-spacing:.01em}
+  input.f, select.f, textarea.f{width:100%; padding:13px 14px; border:1px solid var(--line);
+    border-radius:13px; font-size:16px; background:#fff; outline:none; font-family:inherit; box-shadow:var(--sh-sm); transition:.15s}
+  input.f:focus, select.f:focus, textarea.f:focus{border-color:var(--brand-2); box-shadow:0 0 0 4px rgba(18,185,129,.12)}
+  textarea.f{min-height:76px; resize:vertical}
+  select.f{appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7a76' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; padding-right:40px}
+
+  .gpsbox{display:flex; align-items:center; gap:11px; background:#fff; border:1px dashed #cdd6d2;
+    border-radius:13px; padding:13px 14px; font-size:14px; color:var(--muted); font-weight:600; box-shadow:var(--sh-sm)}
+  .gpsbox.ok{border:1px solid #a9e3c8; background:var(--green-bg); color:#0c7a4e}
+  .gpsbox svg.ic{width:19px;height:19px;flex:none}
+  .thumb{width:100%; border-radius:14px; margin-top:11px; max-height:230px; object-fit:cover; display:block; box-shadow:var(--sh)}
+  .note{font-size:13px; color:var(--muted); margin:9px 3px; line-height:1.55}
+
+  .empty{text-align:center; color:var(--muted); padding:56px 20px}
+  .empty .ring{width:76px;height:76px;border-radius:50%;background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:var(--sh)}
+  .empty .ring svg.ic{width:32px;height:32px;color:var(--brand)}
+  .empty .h{font-weight:700;color:var(--text);font-size:16px}
+
+  /* ---------- bottom nav ---------- */
+  nav.tabbar{position:fixed; left:14px; right:14px; bottom:calc(10px + env(safe-area-inset-bottom)); z-index:30;
+    height:64px; background:rgba(255,255,255,.80); backdrop-filter:saturate(180%) blur(22px);
+    -webkit-backdrop-filter:saturate(180%) blur(22px); border:1px solid rgba(255,255,255,.55);
+    border-radius:22px; display:flex; box-shadow:0 12px 32px rgba(11,61,46,.18), inset 0 1px 0 rgba(255,255,255,.6)}
+  nav.tabbar button{flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:4px; color:var(--faint); font-size:11px; font-weight:650; cursor:pointer; padding:10px 0}
+  nav.tabbar .ib{width:44px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:11px;transition:.2s}
+  nav.tabbar button.active{color:var(--brand)}
+  nav.tabbar button.active .ib{background:var(--green-bg)}
+  nav.tabbar button.mid .ib{width:52px;height:38px;background:var(--grad-brand);color:#fff;box-shadow:var(--sh-brand);margin-top:-6px}
+  nav.tabbar button.mid.active .ib{background:var(--grad-brand)}
+  nav.tabbar button.mid svg.ic{width:24px;height:24px;stroke-width:2.4}
+
+  /* ---------- sheet ---------- */
+  .overlay{position:fixed; inset:0; background:rgba(9,26,21,.42); backdrop-filter:blur(2px);
+    z-index:40; display:none; align-items:flex-end; justify-content:center}
+  .overlay.open{display:flex; animation:fade .2s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet{background:var(--bg); width:100%; max-width:640px; max-height:93vh; overflow-y:auto;
+    border-radius:26px 26px 0 0; padding:8px 18px calc(26px + env(safe-area-inset-bottom));
+    box-shadow:var(--sh-lg); animation:slideup .34s cubic-bezier(.16,1,.3,1)}
+  @keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .grabber{width:38px; height:5px; background:#d3dbd7; border-radius:3px; margin:9px auto 4px}
+  .sheet-head{display:flex; align-items:center; justify-content:space-between; margin:4px 0 2px}
+  .sheet-head h3{margin:0; font-size:21px; font-weight:780; letter-spacing:-.02em}
+  .x{width:34px;height:34px;border-radius:50%;background:#eef1f0;border:none;color:var(--muted);
+    font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+
+  .hist{margin-top:6px}
+  .hist .h{position:relative; padding:0 0 16px 22px; border-left:2px solid var(--line); margin-left:5px}
+  .hist .h:last-child{border-left-color:transparent}
+  .hist .h::before{content:''; position:absolute; left:-6px; top:3px; width:10px; height:10px; border-radius:50%;
+    background:#fff; border:2.5px solid var(--brand)}
+  .hist .h.open::before{border-color:var(--amber); background:var(--amber)}
+  .kv{font-size:14px; color:var(--muted)} .kv b{color:var(--text); font-weight:650}
+
+  .toast{position:fixed; bottom:calc(var(--nav-h) + 22px); left:50%; transform:translateX(-50%) translateY(10px);
+    background:var(--brand-ink); color:#eafaf3; padding:12px 20px; border-radius:999px; font-size:14px; font-weight:650;
+    z-index:60; opacity:0; transition:.25s cubic-bezier(.16,1,.3,1); pointer-events:none; box-shadow:var(--sh-lg);
+    display:flex; align-items:center; gap:8px; max-width:88vw}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .toast svg.ic{width:17px;height:17px;stroke:#3fe0a0}
+
+  /* scanner */
+  #scan.overlay{align-items:center; background:#05100c}
+  #scan .cam{width:100%; max-width:640px; position:relative}
+  #scan video{width:100%; display:block}
+  #scan .frame{position:absolute; inset:16% 14%; border-radius:22px; box-shadow:0 0 0 4000px rgba(5,16,12,.55)}
+  #scan .frame::before,#scan .frame::after,#scan .frame i::before,#scan .frame i::after{content:'';position:absolute;width:30px;height:30px;border:3px solid #3fe0a0}
+  #scan .frame::before{top:-2px;left:-2px;border-right:0;border-bottom:0;border-radius:16px 0 0 0}
+  #scan .frame::after{top:-2px;right:-2px;border-left:0;border-bottom:0;border-radius:0 16px 0 0}
+  #scan .frame i::before{bottom:-2px;left:-2px;border-right:0;border-top:0;border-radius:0 0 0 16px}
+  #scan .frame i::after{bottom:-2px;right:-2px;border-left:0;border-top:0;border-radius:0 0 16px 0}
+  #scan .hint{position:absolute; bottom:16%; left:0; right:0; text-align:center; color:#eafaf3; font-weight:650; font-size:14px}
+  #scan .close{position:absolute; top:calc(env(safe-area-inset-top) + 14px); right:16px; z-index:2; width:auto}
+  #scan .manual{position:absolute; bottom:6%; left:50%; transform:translateX(-50%); z-index:3; width:auto; box-shadow:var(--sh-lg)}
+
+  /* ---------- premium polish ---------- */
+  @keyframes viewIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+  #app.anim{animation:viewIn .34s cubic-bezier(.16,1,.3,1)}
+  .card{box-shadow:var(--sh), inset 0 1px 0 rgba(255,255,255,.7)}
+  .card:not(.late):not(.vcard){background:linear-gradient(180deg,#ffffff,#fcfdfc)}
+  .stat{background:linear-gradient(180deg,#ffffff,#fbfcfb); cursor:pointer; transition:transform .12s}
+  .stat:active{transform:scale(.97)}
+  .stat .n{font-size:27px}
+  .btn.primary{box-shadow:var(--sh-brand), inset 0 1px 0 rgba(255,255,255,.30)}
+  .qbtn{border-radius:19px}
+  .q-plaats{box-shadow:var(--sh-brand), inset 0 1px 0 rgba(255,255,255,.32)}
+  .q-ophaal{box-shadow:var(--sh), inset 0 1px 0 rgba(255,255,255,.7)}
+  .gpschip{display:inline-flex; align-items:center; gap:3px; font-size:10.5px; font-weight:750; color:var(--brand);
+    background:var(--green-bg); padding:2px 7px 2px 6px; border-radius:999px; margin-left:2px; vertical-align:middle}
+  .gpschip svg.ic{width:11px; height:11px; stroke-width:2.4}
+
+  /* ---------- print: QR-labels ---------- */
+  #printArea{display:none}
+  @media print{
+    header,main,nav.tabbar,.overlay,.toast{display:none!important}
+    body{background:#fff;padding:0}
+    #printArea{display:block!important}
+    #printArea h2{text-align:center;font-size:16pt;margin:0 0 8mm}
+    #printArea .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6mm}
+    #printArea .lbl{border:1px solid #d8d8d8;border-radius:8px;padding:5mm 3mm;text-align:center;page-break-inside:avoid}
+    #printArea .lbl svg{width:100%;height:auto;max-width:30mm}
+    #printArea .lbl .c{font-weight:800;font-size:13pt;margin-top:3mm;letter-spacing:.02em}
+    #printArea .lbl .t{font-size:8pt;color:#555;margin-top:1mm}
+    @page{margin:10mm}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brandrow">
+    <div class="brand">
+      <div class="logo" id="logoMark"></div>
+      <div><div class="t">CVA Containers</div><div class="s">Verhuur & tracking</div></div>
+    </div>
+    <div class="liveDot"><span class="d"></span><span id="hdrBadge" class="tnum">–</span></div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<nav class="tabbar" id="tabbar">
+  <button data-action="tab" data-view="containers"><span class="ib" data-ic="box"></span>Containers</button>
+  <button data-action="tab" data-view="veld"><span class="ib" data-ic="truck"></span>Verhuurd</button>
+  <button class="mid" data-action="tab" data-view="plaatsen"><span class="ib" data-ic="plus"></span>Plaatsen</button>
+  <button data-action="tab" data-view="meer"><span class="ib" data-ic="more"></span>Meer</button>
+</nav>
+
+<div class="overlay" id="sheetWrap"><div class="sheet" id="sheet"></div></div>
+
+<div class="overlay" id="scan">
+  <button class="btn primary sm close" data-action="scan-close"><span data-ic="close"></span> Sluiten</button>
+  <div class="cam">
+    <video id="scanVideo" playsinline muted></video>
+    <div class="frame"><i></i></div>
+    <div class="hint">Richt op de QR-code van de container</div>
+  </div>
+  <button class="btn tint-slate sm manual" data-action="scan-manual"><span data-ic="edit"></span> Geen QR? Kies handmatig</button>
+</div>
+
+<div id="printArea"></div>
+<div class="toast" id="toast"></div>
+
+<script src="jsQR.js"></script>
+<script src="qrcode.js"></script>
+<script>
+/* ============================ Iconen (inline SVG, Lucide-stijl) ============================ */
+const ICONS={
+  box:'<path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3.3 7.5 8.7 5 8.7-5"/><path d="M12 22V12.5"/>',
+  truck:'<path d="M3 4h11v11H3z"/><path d="M14 8h4l3 3v4h-7"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  more:'<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
+  scan:'<path d="M4 7V5a1 1 0 0 1 1-1h2"/><path d="M17 4h2a1 1 0 0 1 1 1v2"/><path d="M20 17v2a1 1 0 0 1-1 1h-2"/><path d="M7 20H5a1 1 0 0 1-1-1v-2"/><path d="M4 12h16"/>',
+  pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.7"/>',
+  nav:'<path d="M3 11 22 2l-9 19-2-8-8-2z"/>',
+  phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  trash:'<path d="M3 6h18"/><path d="M19 6v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/>',
+  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/>',
+  chart:'<path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7" rx="1"/><rect x="12" y="6" width="3" height="11" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.6-.5-.5-2.6 2.5-2.7z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  close:'<path d="M18 6 6 18M6 6l12 12"/>',
+  user:'<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+  cal:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  cam:'<path d="M22 18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3l2-3h6l2 3h3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="3.4"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5l3 1.8"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>',
+  alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  check2:'<path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="m22 4-10 10-3-3"/>',
+  gps:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" opacity=".35"/>',
+  add:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'
+};
+function icon(name,cls){ return `<svg class="ic ${cls||''}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]||''}</svg>`; }
+
+/* ============================ Data & opslag ============================ */
+const LS_KEY='containerbeheer_v2';
+let state={ containers:[], placements:[], view:'containers', filter:'alle', search:'' };
+let form={ containerId:null, lat:null, lng:null, acc:null, foto:null };
+
+function uid(){ return (crypto.randomUUID?crypto.randomUUID():'id'+Date.now()+Math.round(Math.random()*1e6)); }
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify({containers:state.containers,placements:state.placements})); }
+function load(){
+  try{ const raw=localStorage.getItem(LS_KEY);
+    if(raw){ const d=JSON.parse(raw); state.containers=d.containers||[]; state.placements=d.placements||[]; }
+    else { seed(); save(); }
+  }catch(e){ seed(); save(); }
+}
+function seed(){
+  const types=['6m³','10m³','20m³','40m³','Big Bag'];
+  const afval=['Bouwafval','Puin','Gemengd','Groenafval','Hout','Gips','Grond'];
+  state.containers=[];
+  for(let i=1;i<=40;i++){ const n=String(i).padStart(3,'0');
+    state.containers.push({id:uid(),code:'C-'+n,naam:'',type:types[i%types.length],afvaltype:afval[i%afval.length],status:'beschikbaar'});
+  }
+  // Demo-verhuringen zodat het dashboard meteen leeft (wisbaar via Meer → Alles wissen)
+  const C=state.containers;
+  const demo=[
+    {i:2,  ago:2,  due:5,    klant:'Bouwwerf Peeters',   adres:'Kerkstraat 12, Aalst',         tel:'+32 475 12 34 56', notitie:'Naast de oprit'},
+    {i:6,  ago:5,  due:1,    klant:'Renovatie Janssens', adres:'Dorpsplein 4, Ninove',         tel:'+32 476 88 21 09', notitie:''},
+    {i:11, ago:21, due:-3,   klant:'Afbraak Willems',    adres:'Stationsstraat 88, Erpe-Mere', tel:'+32 478 55 67 12', notitie:'Bellen voor ophaling'},
+    {i:15, ago:10, due:4,    klant:'Tuinaanleg De Smet', adres:'Molenweg 27, Lede',            tel:'+32 471 30 44 90', notitie:''},
+    {i:22, ago:18, due:null, klant:'Verbouwing Maes',    adres:'Gentsesteenweg 145, Wetteren', tel:'+32 479 12 88 33', notitie:'Geen datum afgesproken'},
+    {i:29, ago:1,  due:10,   klant:'Bouw Claes',         adres:'Industrielaan 3, Denderleeuw',  tel:'+32 470 99 10 21', notitie:''}
+  ];
+  state.placements=demo.map(x=>({
+    id:uid(), containerId:C[x.i].id, klant:x.klant, adres:x.adres, telefoon:x.tel,
+    verwachteOphaal:x.due==null?null:daysAheadDate(x.due), notitie:x.notitie,
+    lat:null, lng:null, foto:null, datumGeplaatst:daysAgoISO(x.ago), datumOpgehaald:null
+  }));
+}
+
+/* ============================ Helpers ============================ */
+function containerById(id){ return state.containers.find(c=>c.id===id); }
+function containerByCode(code){ const q=(code||'').trim().toLowerCase();
+  return state.containers.find(c=>c.code.toLowerCase()===q||(c.naam&&c.naam.toLowerCase()===q)); }
+function activePlacement(id){ return state.placements.find(p=>p.containerId===id&&!p.datumOpgehaald); }
+function daysSince(iso){ return Math.max(0,Math.floor((Date.now()-new Date(iso).getTime())/86400000)); }
+function isOverdue(p){ return p.verwachteOphaal&&!p.datumOpgehaald&&new Date(p.verwachteOphaal)<new Date(new Date().toDateString()); }
+function sev(p){ if(isOverdue(p))return'bad'; const d=daysSince(p.datumGeplaatst); return d>=14?'warn':''; }
+function daysUntil(iso){ return Math.ceil((new Date(iso)-new Date(new Date().toDateString()))/86400000); }
+function urgency(p){ if(isOverdue(p)) return 'red';
+  if(p.verwachteOphaal){ return daysUntil(p.verwachteOphaal)<=2?'amber':'green'; }
+  return daysSince(p.datumGeplaatst)>=14?'amber':'green'; }
+function progPct(p){ const placed=new Date(p.datumGeplaatst).getTime(), now=Date.now();
+  if(p.verwachteOphaal){ const due=new Date(p.verwachteOphaal).getTime(); if(due<=placed) return 100;
+    return Math.max(5,Math.min(100,Math.round((now-placed)/(due-placed)*100))); }
+  return Math.max(5,Math.min(100,Math.round(daysSince(p.datumGeplaatst)/21*100))); }
+function fmtDate(iso){ if(!iso)return'—'; return new Date(iso).toLocaleDateString('nl-BE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function daysAgoISO(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); }
+function daysAheadDate(n){ const d=new Date(); d.setDate(d.getDate()+n); const o=d.getTimezoneOffset(); return new Date(d.getTime()-o*60000).toISOString().slice(0,10); }
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function toast(msg,ok){ const t=document.getElementById('toast');
+  t.innerHTML=(ok?icon('check'):'')+`<span>${esc(msg)}</span>`; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2000); }
+function animateCounts(){ document.querySelectorAll('.count').forEach(el=>{ const to=+el.dataset.to||0, t0=performance.now(), dur=560;
+  const step=t=>{ const k=Math.min(1,(t-t0)/dur); el.textContent=Math.round(to*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(step); }; requestAnimationFrame(step); }); }
+
+/* ============================ Render ============================ */
+function render(){
+  const app=document.getElementById('app');
+  const out=state.placements.filter(p=>!p.datumOpgehaald).length;
+  document.getElementById('hdrBadge').textContent=out+' verhuurd';
+  [...document.querySelectorAll('#tabbar button')].forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));
+  if(state.view==='containers') app.innerHTML=viewContainers();
+  else if(state.view==='veld') app.innerHTML=viewVeld();
+  else if(state.view==='plaatsen') app.innerHTML=viewPlaatsen();
+  else if(state.view==='meer') app.innerHTML=viewMeer();
+  if(state.view==='containers') paintContainerList();
+  app.classList.remove('anim'); void app.offsetWidth; app.classList.add('anim');
+  animateCounts();
+}
+
+function statusPill(c){
+  if(activePlacement(c.id)) return `<span class="pill amber"><span class="dot"></span>Verhuurd</span>`;
+  return `<span class="pill green"><span class="dot"></span>Beschikbaar</span>`;
+}
+function avatar(c){
+  if(activePlacement(c.id)) return `<div class="cavatar amber">${icon('truck')}</div>`;
+  return `<div class="cavatar">${icon('box')}</div>`;
+}
+
+function viewContainers(){
+  const out=state.placements.filter(p=>!p.datumOpgehaald);
+  const late=out.filter(isOverdue).length;
+  const free=state.containers.filter(c=>!activePlacement(c.id)).length;
+  const filters=[['alle','Alle'],['beschikbaar','Beschikbaar'],['geplaatst','Verhuurd']];
+  return `
+    <div class="quick">
+      <button class="qbtn q-plaats" data-action="quick-plaatsen">
+        <span class="qic">${icon('scan')}</span><span class="qt"><b>Plaatsen</b><small>scan &amp; drop</small></span></button>
+      <button class="qbtn q-ophaal" data-action="quick-ophalen">
+        <span class="qic">${icon('check')}</span><span class="qt"><b>Ophalen</b><small>scan &amp; klaar</small></span></button>
+    </div>
+    <div class="hero">
+      <div class="stat a" data-action="go" data-go="veld"><div class="n tnum count" data-to="${out.length}">0</div><div class="l">${icon('truck')}Verhuurd</div></div>
+      <div class="stat r" data-action="go" data-go="veld"><div class="n tnum count" data-to="${late}">0</div><div class="l">${icon('alert')}Te laat</div></div>
+      <div class="stat g" data-action="filter" data-filter="beschikbaar"><div class="n tnum count" data-to="${free}">0</div><div class="l">${icon('box')}Vrij</div></div>
+    </div>
+    <div class="sec">Alle containers</div>
+    <div class="chips">${filters.map(([k,l])=>`<button class="chip ${state.filter===k?'active':''}" data-action="filter" data-filter="${k}">${l}</button>`).join('')}</div>
+    <div class="searchbox">${icon('search')}<input class="search" id="search" placeholder="Zoek op code, type of afval…" value="${esc(state.search)}" /></div>
+    <div id="list"></div>`;
+}
+function paintContainerList(){
+  const list=document.getElementById('list'); if(!list) return;
+  const q=state.search.trim().toLowerCase();
+  let items=state.containers.slice().sort((a,b)=>a.code.localeCompare(b.code)).filter(c=>{
+    const p=activePlacement(c.id);
+    if(state.filter==='beschikbaar'&&p)return false;
+    if(state.filter==='geplaatst'&&!p)return false;
+    if(q){ if(!(c.code+' '+c.naam+' '+c.type+' '+c.afvaltype).toLowerCase().includes(q))return false; }
+    return true;
+  });
+  if(!items.length){ list.innerHTML=`<div class="empty"><div class="ring">${icon('search')}</div><div class="h">Niets gevonden</div><div>Pas je filter of zoekterm aan.</div></div>`; return; }
+  list.innerHTML=items.map(c=>{
+    const p=activePlacement(c.id);
+    let right=`<span class="chev">${icon('nav','')}</span>`;
+    let meta=`<span class="sub">${esc(c.type)} · ${esc(c.afvaltype)}</span>`;
+    if(p){ const d=daysSince(p.datumGeplaatst);
+      meta=`<span class="sub">${esc(p.klant||p.adres||'Geplaatst')}</span>`;
+      right=`<span class="daysbadge ${sev(p)}">${icon('clock')}${d}d</span>`; }
+    return `<div class="card tap" data-action="detail" data-id="${c.id}">
+      <div class="row">
+        <div class="clead">${avatar(c)}<div style="min-width:0">
+          <div class="code">${esc(c.code)}${c.naam?' · '+esc(c.naam):''}</div>${meta}</div></div>
+        ${right}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function viewVeld(){
+  const rank={red:0,amber:1,green:2};
+  const active=state.placements.filter(p=>!p.datumOpgehaald)
+    .sort((a,b)=>(rank[urgency(a)]-rank[urgency(b)]) || (new Date(a.datumGeplaatst)-new Date(b.datumGeplaatst)));
+  if(!active.length) return `<div class="sec">Verhuurd</div>
+    <div class="empty"><div class="ring">${icon('check2')}</div><div class="h">Alles is binnen</div><div>Geen enkele container is momenteel verhuurd.</div></div>`;
+  const uc={green:0,amber:0,red:0}; active.forEach(p=>uc[urgency(p)]++);
+  const N=active.length, pct=k=>Math.round(uc[k]/N*100);
+  const banner=`<div class="fbanner">
+    <div class="top">
+      <div><div class="n tnum count" data-to="${N}">0</div><div class="l">container(s) verhuurd</div></div>
+      ${uc.red?`<div class="lateflag">${icon('alert')}${uc.red} te laat</div>`:''}
+    </div>
+    <div class="stackbar">
+      <i class="sb-green" style="width:${pct('green')}%"></i>
+      <i class="sb-amber" style="width:${pct('amber')}%"></i>
+      <i class="sb-red" style="width:${pct('red')}%"></i>
+    </div>
+    <div class="fbleg"><span><b class="g"></b>Op tijd ${uc.green}</span><span><b class="a"></b>Bijna ${uc.amber}</span><span><b class="r"></b>Te laat ${uc.red}</span></div>
+  </div>`;
+  const cards=active.map(p=>{
+    const c=containerById(p.containerId)||{code:'?'}; const d=daysSince(p.datumGeplaatst); const u=urgency(p);
+    let right;
+    if(u==='red'){ right=`<span class="u-red">${Math.abs(daysUntil(p.verwachteOphaal))} dag(en) te laat</span>`; }
+    else if(p.verwachteOphaal){ const du=daysUntil(p.verwachteOphaal); right=`<span class="u-${u}">${du<=0?'ophalen vandaag':'nog '+du+' dag(en)'}</span>`; }
+    else { right=`<span class="sub">geen ophaaldatum</span>`; }
+    return `<div class="card vcard u-${u}">
+      <div class="row">
+        <div class="clead">${avatar(c)}<div style="min-width:0">
+          <div class="code">${esc(c.code)}${u==='red'?'<span class="pdot"></span>':''}</div>
+          <span class="sub">${esc(p.klant||'—')}</span></div></div>
+        <div class="vdays"><span class="big u-${u} tnum">${d}</span><span class="u">d</span></div>
+      </div>
+      <div class="metaline">${icon('pin')}${esc(p.adres||'—')}${p.lat!=null?` <span class="gpschip">${icon('gps')}GPS</span>`:''}</div>
+      <div class="prog"><i class="pf-${u}" style="width:${progPct(p)}%"></i></div>
+      <div class="progmeta"><span>${icon('cal')}${fmtDate(p.datumGeplaatst)}</span>${right}</div>
+      ${p.notitie?`<div class="metaline">${icon('edit')}${esc(p.notitie)}</div>`:''}
+      <div class="btn-row">
+        <button class="btn tint-slate sm" data-action="navigate" data-id="${p.id}">${icon('nav')}Route</button>
+        ${p.telefoon?`<button class="btn tint-slate sm" data-action="call" data-id="${p.id}">${icon('phone')}Bel</button>`:''}
+        <button class="btn tint sm" data-action="pickup" data-id="${p.id}">${icon('check')}Opgehaald</button>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="sec">Verhuurd</div>${banner}${cards}`;
+}
+
+function viewPlaatsen(){
+  const c=form.containerId?containerById(form.containerId):null;
+  const avail=state.containers.filter(x=>!activePlacement(x.id)).sort((a,b)=>a.code.localeCompare(b.code));
+  const gps=form.lat!=null;
+  return `
+    <div class="sec">Nieuwe plaatsing</div>
+    <label>Container</label>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn ghost sm" style="flex:1" data-action="scan">${icon('scan')}Scan QR</button>
+      <button class="btn tint-slate sm" style="flex:1" data-action="clear-container">${icon('refresh')}Wissen</button>
+    </div>
+    <select class="f" id="containerSel" style="margin-top:9px">
+      <option value="">— kies beschikbare container —</option>
+      ${avail.map(x=>`<option value="${x.id}" ${form.containerId===x.id?'selected':''}>${esc(x.code)} · ${esc(x.type)} · ${esc(x.afvaltype)}</option>`).join('')}
+      ${c&&activePlacement(c.id)?`<option value="${c.id}" selected>${esc(c.code)} (niet beschikbaar!)</option>`:''}
+    </select>
+    ${c?`<div class="metaline">${icon('check')}Gekozen: <b>${esc(c.code)}</b> — ${esc(c.type)}, ${esc(c.afvaltype)}</div>`:''}
+
+    <label>Locatie (GPS)</label>
+    <div class="gpsbox ${gps?'ok':''}">${icon('pin')}${gps?`Vastgelegd (±${Math.round(form.acc)||'?'} m)`:'Nog geen GPS vastgelegd'}</div>
+    <button class="btn tint-slate sm" style="width:100%;margin-top:9px" data-action="gps">${icon('gps')}Leg huidige locatie vast</button>
+
+    <label>Klant / contact</label>
+    <input class="f" id="fKlant" placeholder="Naam klant" />
+    <label>Adres</label>
+    <input class="f" id="fAdres" placeholder="Straat + nr, gemeente" />
+    <label>Telefoon</label>
+    <input class="f" id="fTel" type="tel" inputmode="tel" placeholder="+32…" />
+    <label>Ophalen voor (verwachte datum)</label>
+    <input class="f" id="fOphaal" type="date" />
+    <label>Notitie</label>
+    <textarea class="f" id="fNotitie" placeholder="bv. naast oprit, achter de poort…"></textarea>
+    <label>Foto (optioneel)</label>
+    <input class="f" id="fFoto" type="file" accept="image/*" capture="environment" data-action-change="foto" />
+    ${form.foto?`<img class="thumb" src="${form.foto}" alt="foto"/>`:''}
+    <button class="btn primary" data-action="save-placement">${icon('check')}Plaatsing opslaan</button>`;
+}
+
+function viewMeer(){
+  const total=state.containers.length, out=state.placements.filter(p=>!p.datumOpgehaald).length, done=state.placements.filter(p=>p.datumOpgehaald).length;
+  return `
+    <div class="sec">Overzicht</div>
+    <div class="card">
+      <div class="row"><span class="sub">Containers totaal</span><b class="tnum">${total}</b></div>
+      <div class="row" style="margin-top:9px"><span class="sub">Nu verhuurd</span><b class="tnum">${out}</b></div>
+      <div class="row" style="margin-top:9px"><span class="sub">Historiek (opgehaald)</span><b class="tnum">${done}</b></div>
+    </div>
+    <div class="sec">Backup</div>
+    <p class="note">Alle gegevens staan lokaal op dit toestel. Maak regelmatig een backup zodat je niets verliest als je gsm stuk gaat of je de app herinstalleert.</p>
+    <button class="btn ghost" data-action="export-json">${icon('download')}Backup exporteren (.json)</button>
+    <button class="btn ghost" data-action="export-csv">${icon('chart')}Exporteren naar Excel (.csv)</button>
+    <button class="btn tint-slate" data-action="import-json">${icon('upload')}Backup importeren</button>
+    <input type="file" id="importFile" accept="application/json,.json" style="display:none" data-action-change="import" />
+    <div class="sec">Containers beheren</div>
+    <button class="btn ghost" data-action="new-container">${icon('add')}Nieuwe container toevoegen</button>
+    <button class="btn tint-slate" data-action="print-labels">${icon('scan')}QR-labels afdrukken (C-001…)</button>
+    <p class="note">Tik op een container in het tabblad “Containers” om ze te bewerken of te verwijderen. Print de QR-labels, kleef ze op de containers en scan ze bij het plaatsen.</p>
+    <div class="sec">Gevaarlijk</div>
+    <button class="btn tint-red" data-action="reset">${icon('trash')}Alles wissen & demo herstellen</button>
+    <p class="note" style="margin-top:22px;text-align:center">CVA Containers · lokaal · geen account · v1</p>`;
+}
+
+/* ============================ Sheet ============================ */
+function openSheet(html){ document.getElementById('sheet').innerHTML=html; document.getElementById('sheetWrap').classList.add('open'); }
+function closeSheet(){ document.getElementById('sheetWrap').classList.remove('open'); }
+
+function openDetail(id){
+  const c=containerById(id); if(!c) return;
+  const p=activePlacement(c.id);
+  const hist=state.placements.filter(x=>x.containerId===c.id).sort((a,b)=>new Date(b.datumGeplaatst)-new Date(a.datumGeplaatst));
+  let cur='';
+  if(p){ const d=daysSince(p.datumGeplaatst);
+    cur=`<div class="card ${isOverdue(p)?'late':''}" style="margin-top:12px">
+      <div class="row"><b>Nu geplaatst</b><span class="daysbadge ${sev(p)}">${icon('clock')}${d} dagen</span></div>
+      <div class="metaline">${icon('user')}<b>${esc(p.klant||'—')}</b></div>
+      <div class="metaline">${icon('pin')}${esc(p.adres||'—')}</div>
+      <div class="metaline">${icon('cal')}Geplaatst <b>${fmtDate(p.datumGeplaatst)}</b> · ophalen voor <b>${fmtDate(p.verwachteOphaal)}</b></div>
+      ${p.foto?`<img class="thumb" src="${p.foto}"/>`:''}
+      <div class="btn-row">
+        <button class="btn tint-slate sm" data-action="navigate" data-id="${p.id}">${icon('nav')}Route</button>
+        <button class="btn tint sm" data-action="pickup" data-id="${p.id}">${icon('check')}Opgehaald</button>
+      </div></div>`; }
+  const histHtml=hist.length?`<div class="hist">${hist.map(x=>`<div class="h ${x.datumOpgehaald?'':'open'}">
+      <div class="kv"><b>${esc(x.klant||x.adres||'—')}</b></div>
+      <div class="kv">${fmtDate(x.datumGeplaatst)} → ${x.datumOpgehaald?fmtDate(x.datumOpgehaald):'<b>nog verhuurd</b>'}</div></div>`).join('')}</div>`
+    :`<p class="note">Nog geen historiek.</p>`;
+  openSheet(`<div class="grabber"></div>
+    <div class="sheet-head"><h3>${esc(c.code)}${c.naam?' · '+esc(c.naam):''}</h3><button class="x" data-action="close-sheet">${icon('close')}</button></div>
+    <div class="metaline" style="margin-top:2px">${statusPill(c)}<span class="sub">${esc(c.type)} · ${esc(c.afvaltype)}</span></div>
+    ${cur}
+    <div class="sec">Historiek</div>${histHtml}
+    <div class="btn-row">
+      <button class="btn tint-slate sm" data-action="edit-container" data-id="${c.id}">${icon('edit')}Bewerken</button>
+    </div>`);
+}
+function openContainerForm(id){
+  const c=id?containerById(id):{id:null,code:'',naam:'',type:'10m³',afvaltype:'Bouwafval',status:'beschikbaar'};
+  openSheet(`<div class="grabber"></div>
+    <div class="sheet-head"><h3>${id?'Container bewerken':'Nieuwe container'}</h3><button class="x" data-action="close-sheet">${icon('close')}</button></div>
+    <label>Code (QR-waarde)</label><input class="f" id="cCode" value="${esc(c.code)}" placeholder="C-041" />
+    <label>Naam (optioneel)</label><input class="f" id="cNaam" value="${esc(c.naam)}" placeholder="bv. Grote blauwe" />
+    <label>Type / grootte</label><input class="f" id="cType" value="${esc(c.type)}" placeholder="10m³" />
+    <label>Afvaltype</label><input class="f" id="cAfval" value="${esc(c.afvaltype)}" placeholder="Bouwafval" />
+    <button class="btn primary" data-action="save-container" data-id="${id||''}">${icon('check')}Opslaan</button>
+    ${id?`<button class="btn tint-red" data-action="delete-container" data-id="${id}">${icon('trash')}Container verwijderen</button>`:''}`);
+}
+
+/* ============================ Acties ============================ */
+function savePlacement(){
+  const sel=document.getElementById('containerSel').value||form.containerId;
+  if(!sel){ toast('Kies eerst een container'); return; }
+  const c=containerById(sel);
+  if(activePlacement(sel)){ toast(c.code+' is al verhuurd'); return; }
+  const p={id:uid(),containerId:sel,
+    klant:document.getElementById('fKlant').value.trim(),
+    adres:document.getElementById('fAdres').value.trim(),
+    telefoon:document.getElementById('fTel').value.trim(),
+    verwachteOphaal:document.getElementById('fOphaal').value||null,
+    notitie:document.getElementById('fNotitie').value.trim(),
+    lat:form.lat,lng:form.lng,foto:form.foto,
+    datumGeplaatst:new Date().toISOString(),datumOpgehaald:null};
+  if(!p.adres&&p.lat==null){ toast('Geef een adres of leg GPS vast'); return; }
+  state.placements.push(p); save();
+  form={containerId:null,lat:null,lng:null,acc:null,foto:null};
+  toast(c.code+' geplaatst',true); state.view='veld'; render();
+}
+function markPickedUp(pid){
+  const p=state.placements.find(x=>x.id===pid); if(!p) return;
+  const c=containerById(p.containerId);
+  if(!confirm((c?c.code:'Container')+' als opgehaald markeren?')) return;
+  p.datumOpgehaald=new Date().toISOString(); save(); closeSheet(); toast('Opgehaald',true); render();
+}
+function navigateTo(pid){ const p=state.placements.find(x=>x.id===pid); if(!p) return;
+  const dest=p.lat!=null?p.lat+','+p.lng:(p.adres?encodeURIComponent(p.adres):'');
+  if(!dest){ toast('Geen locatie bekend'); return; }
+  window.open('https://www.google.com/maps/dir/?api=1&destination='+dest,'_blank'); }
+function callCustomer(pid){ const p=state.placements.find(x=>x.id===pid); if(p&&p.telefoon) location.href='tel:'+p.telefoon; }
+function saveContainer(id){
+  const code=document.getElementById('cCode').value.trim();
+  if(!code){ toast('Code is verplicht'); return; }
+  if(state.containers.find(c=>c.code.toLowerCase()===code.toLowerCase()&&c.id!==id)){ toast('Code bestaat al'); return; }
+  const data={code,naam:document.getElementById('cNaam').value.trim(),
+    type:document.getElementById('cType').value.trim()||'—',afvaltype:document.getElementById('cAfval').value.trim()||'—'};
+  if(id){ Object.assign(containerById(id),data); } else { state.containers.push({id:uid(),status:'beschikbaar',...data}); }
+  save(); closeSheet(); toast('Opgeslagen',true); render();
+}
+function deleteContainer(id){
+  if(activePlacement(id)){ toast('Kan niet: container is verhuurd'); return; }
+  if(!confirm('Container definitief verwijderen? Historiek verdwijnt ook.')) return;
+  state.containers=state.containers.filter(c=>c.id!==id);
+  state.placements=state.placements.filter(p=>p.containerId!==id);
+  save(); closeSheet(); toast('Verwijderd'); render();
+}
+
+/* ============================ GPS & foto ============================ */
+function captureGPS(){
+  if(!navigator.geolocation){ toast('GPS niet beschikbaar'); return; }
+  toast('GPS zoeken…');
+  navigator.geolocation.getCurrentPosition(
+    pos=>{ form.lat=pos.coords.latitude; form.lng=pos.coords.longitude; form.acc=pos.coords.accuracy; toast('Locatie vastgelegd',true); render(); },
+    err=>{ toast('GPS mislukt: '+(err.code===1?'geen toestemming':'geen signaal')); },
+    {enableHighAccuracy:true,timeout:12000,maximumAge:0});
+}
+function handlePhoto(file){
+  if(!file) return; const img=new Image(); const rd=new FileReader();
+  rd.onload=()=>{ img.onload=()=>{ const max=900; let w=img.width,h=img.height;
+    if(w>h&&w>max){ h=h*max/w; w=max; } else if(h>max){ w=w*max/h; h=max; }
+    const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+    form.foto=cv.toDataURL('image/jpeg',0.55); render(); }; img.src=rd.result; };
+  rd.readAsDataURL(file);
+}
+
+/* ============================ QR-scanner ============================ */
+let scanStream=null,scanRAF=null,scanDetector=null,scanCanvas=null,scanCtx=null,scanMode='plaatsen';
+async function startScan(mode){
+  scanMode=mode||'plaatsen';
+  try{ scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
+  catch(e){ toast('Geen camera — kies handmatig'); scanFallback(); return; }
+  const v=document.getElementById('scanVideo'); v.srcObject=scanStream;
+  try{ await v.play(); }catch(e){}
+  document.getElementById('scan').classList.add('open');
+  // Snelste pad: native BarcodeDetector (Android). Val terug op jsQR (iOS/Safari).
+  scanDetector=null;
+  if('BarcodeDetector' in window){ try{ scanDetector=new BarcodeDetector({formats:['qr_code']}); }catch(e){ scanDetector=null; } }
+  if(!scanCanvas){ scanCanvas=document.createElement('canvas'); scanCtx=scanCanvas.getContext('2d',{willReadFrequently:true}); }
+  const tick=async()=>{
+    if(!scanStream) return;
+    let val=null;
+    if(v.readyState>=2 && v.videoWidth){
+      if(scanDetector){
+        try{ const codes=await scanDetector.detect(v); if(codes&&codes.length) val=codes[0].rawValue; }
+        catch(e){ scanDetector=null; }
+      }
+      if(!val && typeof jsQR!=='undefined'){
+        const s=Math.min(1,640/Math.max(v.videoWidth,v.videoHeight));
+        const w=Math.round(v.videoWidth*s), h=Math.round(v.videoHeight*s);
+        scanCanvas.width=w; scanCanvas.height=h; scanCtx.drawImage(v,0,0,w,h);
+        const r=jsQR(scanCtx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'dontInvert'});
+        if(r&&r.data) val=r.data;
+      }
+    }
+    if(val){ stopScan(); onScanned(val); return; }
+    scanRAF=requestAnimationFrame(tick);
+  };
+  tick();
+}
+function stopScan(){ document.getElementById('scan').classList.remove('open');
+  if(scanRAF) cancelAnimationFrame(scanRAF); if(scanStream){ scanStream.getTracks().forEach(t=>t.stop()); scanStream=null; } }
+function onScanned(val){
+  const c=containerByCode(val);
+  if(!c){ toast('Onbekende code: '+val); return; }
+  if(scanMode==='ophalen'){
+    const p=activePlacement(c.id);
+    if(!p){ toast(c.code+' is niet verhuurd'); return; }
+    openReturnSheet(p); return;
+  }
+  if(activePlacement(c.id)){ toast(c.code+' is al verhuurd'); return; }
+  form.containerId=c.id;
+  if(scanMode==='plaatsen-quick'){ state.view='plaatsen'; toast(c.code+' geselecteerd',true); render(); captureGPS(); }
+  else { toast(c.code+' geselecteerd',true); render(); }
+}
+function openReturnSheet(p){
+  const c=containerById(p.containerId)||{code:'?'}; const d=daysSince(p.datumGeplaatst); const u=urgency(p);
+  openSheet(`<div class="grabber"></div>
+    <div class="sheet-head"><h3>Ophalen bevestigen</h3><button class="x" data-action="close-sheet">${icon('close')}</button></div>
+    <div class="card vcard u-${u}" style="margin-top:8px">
+      <div class="row"><div class="clead">${avatar(c)}<div style="min-width:0">
+        <div class="code">${esc(c.code)}</div><span class="sub">${esc(p.klant||'—')}</span></div></div>
+        <div class="vdays"><span class="big u-${u} tnum">${d}</span><span class="u">d</span></div></div>
+      <div class="metaline">${icon('pin')}${esc(p.adres||'—')}</div>
+      <div class="metaline">${icon('cal')}Geplaatst ${fmtDate(p.datumGeplaatst)}</div>
+    </div>
+    <button class="btn primary" data-action="confirm-pickup" data-id="${p.id}">${icon('check')}Bevestig ophaling</button>
+    <button class="btn tint-slate" data-action="close-sheet">Annuleer</button>`);
+}
+function doPickup(pid){ const p=state.placements.find(x=>x.id===pid); if(!p) return;
+  p.datumOpgehaald=new Date().toISOString(); save(); closeSheet(); toast('Opgehaald',true); state.view='containers'; render(); }
+function openReturnPicker(){
+  const active=state.placements.filter(p=>!p.datumOpgehaald).sort((a,b)=>new Date(a.datumGeplaatst)-new Date(b.datumGeplaatst));
+  if(!active.length){ toast('Niets om op te halen'); return; }
+  const rows=active.map(p=>{ const c=containerById(p.containerId)||{code:'?'}; const d=daysSince(p.datumGeplaatst); const u=urgency(p);
+    return `<div class="card tap vcard u-${u}" data-action="pick-return" data-id="${p.id}">
+      <div class="row"><div class="clead">${avatar(c)}<div style="min-width:0">
+        <div class="code">${esc(c.code)}</div><span class="sub">${esc(p.klant||p.adres||'—')}</span></div></div>
+        <div class="vdays"><span class="big u-${u} tnum">${d}</span><span class="u">d</span></div></div></div>`; }).join('');
+  openSheet(`<div class="grabber"></div>
+    <div class="sheet-head"><h3>Welke container ophalen?</h3><button class="x" data-action="close-sheet">${icon('close')}</button></div>
+    <p class="note">Tik de container die je ophaalt.</p>${rows}`);
+}
+function openReturnById(id){ const p=state.placements.find(x=>x.id===id); if(p) openReturnSheet(p); }
+function scanFallback(){ if(scanMode==='ophalen') openReturnPicker(); else { state.view='plaatsen'; render(); toast('Kies de container uit de lijst'); } }
+function scanManual(){ stopScan(); scanFallback(); }
+
+/* ============================ Export / import ============================ */
+function download(name,content,type){ const b=new Blob([content],{type}); const u=URL.createObjectURL(b);
+  const a=document.createElement('a'); a.href=u; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(u),1000); }
+function exportJSON(){ const s=new Date().toISOString().slice(0,10);
+  download('containerbeheer-backup-'+s+'.json',JSON.stringify({containers:state.containers,placements:state.placements,exported:new Date().toISOString()},null,2),'application/json');
+  toast('Backup gedownload',true); }
+function exportCSV(){
+  const head=['Container','Type','Afvaltype','Klant','Adres','Telefoon','Geplaatst','OphalenVoor','Opgehaald','Dagen','Lat','Lng','Notitie'];
+  const rows=state.placements.map(p=>{ const c=containerById(p.containerId)||{};
+    const dagen=p.datumOpgehaald?Math.floor((new Date(p.datumOpgehaald)-new Date(p.datumGeplaatst))/86400000):daysSince(p.datumGeplaatst);
+    return [c.code||'',c.type||'',c.afvaltype||'',p.klant||'',p.adres||'',p.telefoon||'',fmtDate(p.datumGeplaatst),fmtDate(p.verwachteOphaal),p.datumOpgehaald?fmtDate(p.datumOpgehaald):'',dagen,p.lat!=null?p.lat:'',p.lng!=null?p.lng:'',(p.notitie||'').replace(/\n/g,' ')]; });
+  const csv=[head,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  download('containerbeheer-'+new Date().toISOString().slice(0,10)+'.csv','﻿'+csv,'text/csv'); toast('CSV gedownload',true); }
+function importJSON(file){ const rd=new FileReader();
+  rd.onload=()=>{ try{ const d=JSON.parse(rd.result); if(!d.containers) throw 0;
+    if(!confirm('Backup importeren? Dit vervangt je huidige gegevens.')) return;
+    state.containers=d.containers; state.placements=d.placements||[]; save(); render(); toast('Backup geladen',true);
+  }catch(e){ toast('Ongeldig backup-bestand'); } }; rd.readAsText(file); }
+function resetAll(){ if(!confirm('Zeker? Alle gegevens worden gewist en de 40 demo-containers hersteld.')) return;
+  seed(); save(); state.view='containers'; state.filter='alle'; state.search=''; render(); toast('Hersteld',true); }
+function printLabels(){
+  if(typeof qrcode==='undefined'){ toast('QR-generator niet geladen'); return; }
+  const cells=state.containers.slice().sort((a,b)=>a.code.localeCompare(b.code)).map(c=>{
+    const q=qrcode(0,'M'); q.addData(c.code); q.make();
+    const svg=q.createSvgTag({cellSize:3,margin:2,scalable:true});
+    return `<div class="lbl">${svg}<div class="c">${esc(c.code)}</div><div class="t">${esc(c.type)} · ${esc(c.afvaltype)}</div></div>`;
+  }).join('');
+  document.getElementById('printArea').innerHTML=`<h2>Container QR-labels</h2><div class="grid">${cells}</div>`;
+  window.print();
+}
+
+/* ============================ Events ============================ */
+document.addEventListener('click',e=>{ const el=e.target.closest('[data-action]'); if(!el) return;
+  const a=el.dataset.action,id=el.dataset.id;
+  switch(a){
+    case'tab': state.view=el.dataset.view; render(); break;
+    case'go': state.view=el.dataset.go; render(); break;
+    case'filter': state.filter=el.dataset.filter; render(); break;
+    case'detail': openDetail(id); break;
+    case'close-sheet': closeSheet(); break;
+    case'navigate': navigateTo(id); break;
+    case'call': callCustomer(id); break;
+    case'pickup': markPickedUp(id); break;
+    case'edit-container': closeSheet(); openContainerForm(id); break;
+    case'new-container': openContainerForm(null); break;
+    case'save-container': saveContainer(id||null); break;
+    case'delete-container': deleteContainer(id); break;
+    case'gps': captureGPS(); break;
+    case'scan': startScan(); break;
+    case'quick-plaatsen': startScan('plaatsen-quick'); break;
+    case'quick-ophalen': startScan('ophalen'); break;
+    case'confirm-pickup': doPickup(id); break;
+    case'scan-manual': scanManual(); break;
+    case'pick-return': openReturnById(id); break;
+    case'scan-close': stopScan(); break;
+    case'clear-container': form.containerId=null; render(); break;
+    case'save-placement': savePlacement(); break;
+    case'export-json': exportJSON(); break;
+    case'export-csv': exportCSV(); break;
+    case'import-json': document.getElementById('importFile').click(); break;
+    case'reset': resetAll(); break;
+    case'print-labels': printLabels(); break;
+  }});
+document.addEventListener('input',e=>{
+  if(e.target.id==='search'){ state.search=e.target.value; paintContainerList(); }
+  if(e.target.id==='containerSel'){ form.containerId=e.target.value||null; }});
+document.addEventListener('change',e=>{ const ch=e.target.dataset.actionChange;
+  if(ch==='foto') handlePhoto(e.target.files[0]); if(ch==='import') importJSON(e.target.files[0]); });
+document.getElementById('sheetWrap').addEventListener('click',e=>{ if(e.target.id==='sheetWrap') closeSheet(); });
+
+/* ============================ Init ============================ */
+document.getElementById('logoMark').innerHTML=icon('box');
+[...document.querySelectorAll('[data-ic]')].forEach(s=>s.innerHTML=icon(s.dataset.ic));
+load(); render();
+if('serviceWorker' in navigator){
+  let reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!reloaded){ reloaded=true; location.reload(); } });
+  navigator.serviceWorker.register('sw.js').then(reg=>{ if(reg.update) reg.update(); }).catch(()=>{});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "CVA Containers",
+  "short_name": "CVA Containers",
+  "description": "Verhuur & tracking van afvalcontainers — lokaal, geen account.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b3d2e",
+  "theme_color": "#0b3d2e",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
